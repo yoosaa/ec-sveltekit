@@ -1,30 +1,14 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("POSTGRES_PRISMA_URL")
-	directUrl         = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
-  shadowDatabaseUrl = env("POSTGRES_URL_SHADOW_NON_POOLING") // used for migrations
+  provider          = "postgresql"
+  url               = env("POSTGRES_URL")
+  directUrl         = env("POSTGRES_URL_NON_POOLING")
+  shadowDatabaseUrl = env("POSTGRES_URL_SHADOW_NON_POOLING")
 }
 
-
-// The selected code defines several Prisma models for a user authentication and purchase history system. The models include:
-
-// - `Account`: Stores user account information, such as the provider, account ID, and access/refresh tokens.
-// - `Session`: Stores user session information, including the session token and expiration date.
-// - `User`: Stores user profile information, such as name, email, and email verification status. It also has relations to the `Account` and `Purchase` models.
-// - `Purchase`: Stores information about user purchases, including the purchased item ID and the purchase date.
-// - `VerificationToken`: Stores information about email verification tokens, including the token and expiration date.
-
-// These models provide the necessary data structures for implementing user authentication, session management, and purchase history tracking in an application.
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -52,22 +36,22 @@ model Session {
 }
 
 model User {
-  id            String        @id @default(cuid())
+  id            String     @id @default(cuid())
   name          String?
-  email         String?       @unique
+  email         String?    @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
-  purchases     Purchase[]    // 購入履歴へのリレーション
+  purchases     Purchase[]
   sessions      Session[]
 }
 
 model Purchase {
   id        String   @id @default(cuid())
-  userId    String   // 購入したユーザーのID
-  bookId    String   // 購入した商品のID (MicroCMSのID)
-  createdAt DateTime @default(now()) // 購入日時
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade) // Userモデルへのリレーション
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
