@@ -41,6 +41,7 @@
 	"dependencies": {
 		"@auth/sveltekit": "^1.7.4",
 		"@prisma/client": "^6.1.0",
+		"microcms-js-sdk": "^3.1.2",
 		"stripe": "^17.5.0"
 	}
 }

@@ -1,1 +1,1 @@
-export { handle } from '$lib/ts/auth/auth.server';
+export { handle } from '$lib/ts/serverServices/auth/auth.server';

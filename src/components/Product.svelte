@@ -3,6 +3,7 @@
 
 	export let product: ProductType;
 	export let isPurchased: boolean = false;
+	console.log(product);
 
 	const truncateText = (text: string, maxLength: number) => {
 		if (text.length > maxLength) {
@@ -24,7 +25,7 @@
 	>
 		<div class="relative h-64 w-96">
 			<img
-				src={product.thumbnail.url}
+				src={product.image.url}
 				alt={product.title}
 				class="h-full w-full rounded-t-md object-cover"
 			/>
@@ -32,7 +33,7 @@
 
 		<div class="h-full rounded-b-md bg-slate-100 px-4 py-4">
 			<h2 class="text-xl font-semibold">{product.title}</h2>
-			{#if product.tag.length > 0}
+			{#if product.tag && product.tag.length > 0}
 				<div class="mt-2">
 					{#each product.tag as tag}
 						<span class="inline-block rounded-full bg-yellow-400 from-black px-3 py-1 text-sm">

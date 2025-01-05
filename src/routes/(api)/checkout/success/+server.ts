@@ -1,5 +1,5 @@
 import { env } from '$env/dynamic/private';
-import prisma from '$lib/ts/prisma';
+import prisma from '$lib/ts/clientServices/prisma';
 import Stripe from 'stripe';
 
 // init

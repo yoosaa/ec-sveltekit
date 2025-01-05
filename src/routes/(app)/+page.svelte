@@ -1,16 +1,34 @@
 <script lang="ts">
+	import { page } from '$app/stores';
+	import Loading from '../../components/Loading.svelte';
 	import Product from '../../components/Product.svelte';
 
-	interface ProductType {
-		id: number;
-		title: string;
-		price: number;
-		thumbnail: { url: string };
-		content: string;
-		created_at: string;
-		updated_at: string;
-		tag: string[];
-	}
+	const session = $page.data.session;
+	const user = session?.user;
+
+	const getAllProducts = async () => {
+		const res = await fetch('/products/all');
+		const data = await res.json();
+		console.log(data);
+		return data;
+	};
+
+	let purchasedIds: number[] = [];
+	console.log($page);
+	const getPurchaseIds = async () => {
+		let purchasesData = [];
+
+		const res = await fetch(`/purchases/${user?.id}`, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+
+		purchasesData = await res.json();
+		console.log(purchasesData);
+		return purchasesData.map((purchase) => purchase.productId);
+	};
 
 	// 疑似データ
 	const product = [
@@ -56,7 +74,19 @@
 
 <main class="mt-10 flex flex-wrap items-center justify-center md:mt-16">
 	<h2 class="mb-2 w-full text-center text-3xl font-bold">猫缶一覧</h2>
-	{#each product as product}
-		<Product {product} isPurchased={product.updatedAt === new Date().toString()} />
-	{/each}
+	{#await getAllProducts()}
+		<Loading />
+	{:then products}
+		{#await getPurchaseIds()}
+			<Loading />
+		{:then purchasedIds}
+			{#each products as product}
+				{#if purchasedIds.length > 0}
+					<Product {product} isPurchased={purchasedIds.includes(product.id)} />
+				{:else}
+					<Product {product} />
+				{/if}
+			{/each}
+		{/await}
+	{/await}
 </main>

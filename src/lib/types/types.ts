@@ -3,7 +3,7 @@ type ProductType = {
 	title: string;
 	price: number;
 	content: string;
-	thumbnail: { url: string };
+	image: { url: string };
 	createdAt: string;
 	updatedAt: string;
 	tag: string[];

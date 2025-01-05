@@ -1,19 +1,18 @@
-import prisma from '$lib/ts/prisma';
+import prisma from '$lib/ts/clientServices/prisma';
 
-export async function GET({ url }: { url: URL }): Promise<Response> {
-	const userId = url.searchParams.get('userId');
-
+export const GET = async ({ params }: { params: { userId: string } }): Promise<Response> => {
+	const userId = params.userId;
 	try {
 		if (prisma != null && userId != null) {
 			const purchase = await prisma.purchase.findMany({
 				where: { userId }
 			});
 
-			return Response.json(purchase);
+			return new Response(JSON.stringify(purchase));
 		} else {
-			return Response.json({ message: 'cannot find prisma or userId' });
+			return new Response(JSON.stringify({ message: 'cannot find prisma or userId' }));
 		}
 	} catch (err) {
-		return Response.json(err);
+		return new Response(JSON.stringify(err));
 	}
-}
+};
