@@ -14,7 +14,6 @@ export const { handle, signIn, signOut } = SvelteKitAuth(async () => {
 		trustHost: true,
 		callbacks: {
 			async jwt({ token, account, user }) {
-				console.log('JWT token:', token, 'User:', user, 'Account:', account);
 				if (user) {
 					token.id = user.id;
 					token.role = user.role ?? 'user';

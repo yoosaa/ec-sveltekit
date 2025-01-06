@@ -1,9 +1,10 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import Loading from '../../components/Loading.svelte';
 	import Product from '../../components/Product.svelte';
 
-	const session = $page.data.session;
+	export let data;
+
+	const session = data.session;
 	const user = session?.user;
 
 	const getAllProducts = async () => {
@@ -13,8 +14,6 @@
 		return data;
 	};
 
-	let purchasedIds: number[] = [];
-	console.log($page);
 	const getPurchaseIds = async () => {
 		let purchasesData = [];
 
@@ -29,40 +28,6 @@
 		console.log(purchasesData);
 		return purchasesData.map((purchase) => purchase.productId);
 	};
-
-	// 疑似データ
-	const product = [
-		{
-			id: 1,
-			title: '猫缶01',
-			thumbnail: { url: '/thumbnails/01.png' },
-			price: 2980,
-			content: '猫缶01の詳細情報です',
-			tag: ['ジャンボ缶', '多頭飼', '魚介類', 'まとめ買い', '全猫種用', 'お徳用'],
-			createdAt: new Date().toString(),
-			updatedAt: new Date().toString()
-		},
-		{
-			id: 2,
-			title: '猫缶02',
-			thumbnail: { url: '/thumbnails/02.png' },
-			price: 1980,
-			content: '猫缶02の詳細情報です',
-			tag: ['魚介類', 'まとめ買い', '全猫種用', 'お徳用'],
-			createdAt: new Date().toString(),
-			updatedAt: new Date().toString()
-		},
-		{
-			id: 3,
-			title: '猫缶03',
-			price: 4980,
-			thumbnail: { url: '/thumbnails/03.png' },
-			content: '猫缶03の詳細情報です',
-			tag: ['魚介類', 'まとめ買い', '全猫種用'],
-			createdAt: new Date().toString(),
-			updatedAt: new Date().toString()
-		}
-	];
 </script>
 
 <div class="relative h-64 w-full md:h-96">
