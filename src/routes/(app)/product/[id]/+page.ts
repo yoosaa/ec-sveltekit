@@ -1,4 +1,4 @@
-export function load({ params, parent }) {
+export function load({ params }: { params: { id: string } }) {
 	return {
 		id: params.id
 	};
