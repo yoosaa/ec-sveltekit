@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import type { ProductType } from '$lib/types/types';
 	import { Button, Modal } from 'flowbite-svelte';
 
@@ -6,16 +7,15 @@
 
 	let product = {} as ProductType;
 	let loading: boolean = true;
-	let showModal: boolean = false;
 	let isOpenModal = false;
 
 	const layoutData = data.session;
 	const user = layoutData?.user;
 
-	const fetchedProductDetail = async () => {
+	const fetchedProductDetail = async (productId: string) => {
 		try {
 			console.log(data);
-			const fetchedProduct = await fetch(`/products/detail/${data.id}`);
+			const fetchedProduct = await fetch(`/products/detail/${productId}`);
 			product = await fetchedProduct.json();
 		} catch (error) {
 			console.error(error);
@@ -24,7 +24,7 @@
 		}
 	};
 
-	$: fetchedProductDetail();
+	$: fetchedProductDetail(data.id);
 
 	const formattedPrice = (price: number) => {
 		return new Intl.NumberFormat('ja-JP', {
@@ -36,9 +36,48 @@
 	const formatContent = (content: string) => {
 		return content.replace(/\n/g, '<br>');
 	};
+
+	const handlePurchaseConfirmation = () => {
+		if (!user) {
+			isOpenModal = false;
+			goto('/login');
+		} else {
+			handleCheckout();
+		}
+	};
+
+	// stripe checkout
+	const handleCheckout = async () => {
+		try {
+			const res = await fetch('/checkout', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					title: product.title,
+					productId: product.id,
+					price: product.price,
+					userId: user?.id
+				})
+			});
+
+			const responseData = await res.json();
+			console.log(responseData);
+
+			if (responseData && responseData.checkout_url) {
+				sessionStorage.setItem('stripeSessionId', responseData.sessionId);
+
+				// リダイレクト
+				window.location = responseData.checkout_url;
+			} else {
+				console.error('Failed to fetch checkout URL');
+			}
+		} catch (error) {
+			console.error('Error fetching checkout URL:', error);
+		}
+	};
 </script>
 
-{#await fetchedProductDetail()}
+{#await fetchedProductDetail(data.id)}
 	<p>loading...</p>
 {:then}
 	<div class="container mx-auto mb-8 mt-8 p-4">
@@ -90,7 +129,7 @@
 						<p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
 							この猫缶を購入しますか？
 						</p>
-						<Button on:click={() => alert('Handle "success"')}>購入する</Button>
+						<Button on:click={() => handlePurchaseConfirmation()}>購入する</Button>
 						<Button color="alternative">キャンセル</Button>
 					</Modal>
 				</div>

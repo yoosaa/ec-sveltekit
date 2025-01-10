@@ -6,8 +6,9 @@ const stripe = new Stripe(env.STRIPE_SECRET_KEY!);
 
 const baseUrl = env.VERCEL_BASE_URL;
 
-export async function POST(request: Request) {
+export async function POST({ request }: { request: Request }) {
 	const { title, price, productId, userId } = await request.json();
+	console.log(price);
 
 	try {
 		const session = await stripe.checkout.sessions.create({
