@@ -5,8 +5,10 @@ import Stripe from 'stripe';
 // init
 const stripe = new Stripe(env.STRIPE_SECRET_KEY!);
 
-export async function POST(request: Request) {
+export const POST = async ({ request }: { request: Request }) => {
 	const { sessionId } = await request.json();
+
+	console.log(sessionId);
 
 	try {
 		const session = await stripe.checkout.sessions.retrieve(sessionId);
@@ -27,4 +29,4 @@ export async function POST(request: Request) {
 		console.error(error);
 		return Response.json({ error: 'Failed to create purchase' });
 	}
-}
+};
